@@ -1,0 +1,34 @@
+env:
+  - CGO_ENABLED=0
+before:
+  hooks:
+    - make
+builds:
+  - id: "ssh-docker-image"
+    main: ./main.go
+    binary: ssh-docker-image
+    ldflags:
+     - -s -w -X github.com/damianoneill/ssh-docker-image/cmd.version={{ .Version }} -X github.com/damianoneill/ssh-docker-image/cmd.commit={{ .Commit }} -X github.com/damianoneill/ssh-docker-image/cmd.date={{ .Date }}
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+archives:
+  - replacements:
+      amd64: x86_64
+release:
+  gitlab:
+    owner: damianoneill
+    name: ssh-docker-image
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
